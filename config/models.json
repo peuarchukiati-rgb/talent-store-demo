@@ -1,0 +1,31 @@
+{
+  "_note": "Which model runs is config, not code. The store does not change when this changes. Keys come from environment variables only.",
+  "default": "azure",
+  "profiles": {
+    "azure": {
+      "provider": "azure_openai",
+      "deployment": "gpt-4o",
+      "api_version": "2024-10-21",
+      "endpoint_env": "AZURE_OPENAI_ENDPOINT",
+      "key_env": "AZURE_OPENAI_API_KEY",
+      "label": "Azure OpenAI (inside the organisation's tenant)"
+    },
+    "gemini": {
+      "provider": "gemini",
+      "model": "gemini-2.5-flash",
+      "key_env": "GEMINI_API_KEY",
+      "label": "Google Gemini 2.5 Flash"
+    },
+    "openai": {
+      "provider": "codex_cli",
+      "model": "gpt-5.6-sol",
+      "reasoning_effort": "low",
+      "label": "OpenAI GPT-5.6"
+    },
+    "claude": {
+      "provider": "claude_cli",
+      "model": "sonnet",
+      "label": "Anthropic Claude Sonnet"
+    }
+  }
+}

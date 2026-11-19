@@ -1,0 +1,10 @@
+run B-claude-sonnet: Anthropic Claude Sonnet (sonnet) · JD-SC-014 · 8 candidates
+  C-001 [internal] 10.0s
+  C-002 [internal] 7.7s
+  C-003 [internal] 8.1s
+  C-004 [external] 14.4s
+  C-005 [external] 8.1s
+  C-006 [external] 8.1s
+  C-007 [external] 7.3s · 1 warning(s)
+  C-008 [external] 6.8s
+raw layer after run: unchanged (matches manifest)

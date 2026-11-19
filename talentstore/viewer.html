@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Talent Store · BUC-1B pre-screen demo</title>
+<style>
+  :root{
+    --bg:#f6f5f2; --panel:#ffffff; --ink:#1d1d1b; --muted:#6b6a66; --line:#e3e1dc;
+    --accent:#1f4e79; --accent-soft:#e8eef5; --ok:#2f6b3a; --ok-soft:#e6f1e7;
+    --part:#8a5a00; --part-soft:#fbf0db; --none:#7a7a7a; --none-soft:#efefef; --warn:#a33a2b;
+    --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif}
+  header{display:flex;flex-wrap:wrap;gap:12px 24px;align-items:center;justify-content:space-between;padding:14px 24px;background:var(--panel);border-bottom:1px solid var(--line)}
+  h1{font-size:17px;margin:0;font-weight:650;letter-spacing:-.01em}
+  h1 small{font-weight:400;color:var(--muted);margin-left:8px}
+  .badges{display:flex;gap:8px;flex-wrap:wrap}
+  .badge{font-size:12px;padding:3px 9px;border-radius:999px;border:1px solid var(--line);background:#fafaf8;color:var(--muted);white-space:nowrap}
+  .badge.strong{border-color:var(--accent);color:var(--accent);background:var(--accent-soft)}
+  nav{display:flex;gap:4px;padding:10px 24px 0;background:var(--panel);border-bottom:1px solid var(--line)}
+  nav a{padding:8px 14px;border-radius:8px 8px 0 0;color:var(--muted);text-decoration:none;font-weight:550;font-size:14px;border:1px solid transparent;border-bottom:none}
+  nav a.on{color:var(--ink);background:var(--bg);border-color:var(--line)}
+  main{padding:20px 24px 40px}
+  .grid{display:grid;grid-template-columns:300px 320px 1fr;gap:16px;align-items:start}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px}
+  .card h2{font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:0 0 10px;font-weight:650}
+  .card h3{font-size:16px;margin:0 0 4px}
+  .muted{color:var(--muted)} .small{font-size:13px}
+  .req{display:flex;gap:8px;padding:6px 0;border-top:1px solid var(--line);font-size:13.5px}
+  .req:first-of-type{border-top:none}
+  .rid{font-family:var(--mono);font-size:12px;color:var(--accent);min-width:24px;padding-top:1px}
+  .kind{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+  .runs{display:flex;flex-direction:column;gap:6px;margin-top:6px}
+  .run{display:block;padding:8px 10px;border:1px solid var(--line);border-radius:8px;text-decoration:none;color:var(--ink);font-size:13px}
+  .run.on{border-color:var(--accent);background:var(--accent-soft)}
+  .run b{display:block;font-size:13.5px}
+  .group{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:14px 0 6px;font-weight:650;display:flex;justify-content:space-between}
+  .group:first-child{margin-top:0}
+  .cand{display:block;text-decoration:none;color:var(--ink);padding:10px 12px;border:1px solid var(--line);border-radius:10px;margin-bottom:6px;background:#fff}
+  .cand.on{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-soft)}
+  .cand .nm{font-weight:600}
+  .cand .meta{font-size:12.5px;color:var(--muted)}
+  .pill{display:inline-block;font-size:11.5px;padding:1px 8px;border-radius:999px;background:var(--none-soft);color:var(--muted);margin-right:4px}
+  .pill.int{background:var(--accent-soft);color:var(--accent)}
+  .pill.dec{background:var(--ok-soft);color:var(--ok)}
+  .st{font-family:var(--mono);font-size:11.5px;padding:1px 7px;border-radius:6px;white-space:nowrap}
+  .st.evidenced{background:var(--ok-soft);color:var(--ok)}
+  .st.partial{background:var(--part-soft);color:var(--part)}
+  .st.not_found{background:var(--none-soft);color:var(--none)}
+  .ev{border-top:1px solid var(--line);padding:12px 0}
+  .ev:first-child{border-top:none}
+  .evh{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  .evh .rt{font-size:13.5px;color:var(--muted)}
+  blockquote{margin:8px 0 0;padding:6px 10px;border-left:3px solid var(--accent);background:#fafaf8;font-size:14px}
+  blockquote .chk{display:block;font-size:11.5px;color:var(--ok);margin-top:2px}
+  blockquote .chk.bad{color:var(--warn)}
+  .note{font-size:13.5px;margin-top:6px}
+  .gate{margin-top:16px;padding:14px;border:1px dashed var(--accent);border-radius:10px;background:var(--accent-soft)}
+  .gate .btns{display:flex;gap:8px;margin:10px 0 6px;flex-wrap:wrap}
+  .gate button{font:inherit;font-size:13.5px;padding:7px 14px;border-radius:8px;border:1px solid var(--accent);background:#fff;color:var(--accent);cursor:pointer}
+  .gate code{font-family:var(--mono);font-size:12px;word-break:break-all}
+  .prov{font-family:var(--mono);font-size:12px;color:var(--muted);margin-top:14px;line-height:1.7;word-break:break-all}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  table{border-collapse:collapse;width:100%;font-size:13px}
+  th,td{text-align:left;padding:7px 8px;border-top:1px solid var(--line);vertical-align:top}
+  th{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);border-top:none}
+  td.h{font-family:var(--mono);font-size:12px}
+  .same{color:var(--ok);font-weight:600} .diff{color:var(--warn);font-weight:600}
+  pre{font-family:var(--mono);font-size:12px;background:#fafaf8;border:1px solid var(--line);border-radius:8px;padding:12px;overflow:auto;white-space:pre-wrap;margin:0}
+  .tree a{display:block;font-family:var(--mono);font-size:12.5px;color:var(--ink);text-decoration:none;padding:3px 6px;border-radius:5px}
+  .tree a.on{background:var(--accent-soft);color:var(--accent)}
+  .tree .dir{font-family:var(--mono);font-size:12px;color:var(--muted);margin:10px 0 2px}
+  .lock{color:var(--muted);font-size:11px}
+  .banner{display:flex;gap:10px;align-items:center;padding:10px 14px;border-radius:10px;background:var(--ok-soft);color:var(--ok);font-weight:600;margin-bottom:16px}
+  .banner.bad{background:#f8e5e2;color:var(--warn)}
+  @media (max-width:1100px){.grid{grid-template-columns:1fr}.two{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header>
+  <h1>Talent Store <small>BUC-1B pre-screen · demo</small></h1>
+  <div class="badges">
+    <span class="badge strong">Synthetic data only</span>
+    <span class="badge strong">No scoring · no ranking</span>
+    <span class="badge strong">A person decides</span>
+    <span class="badge">Store = Markdown + frontmatter</span>
+  </div>
+</header>
+<nav id="nav"></nav>
+<main id="app"></main>
+<script>
+const D = /*__DATA__*/null;
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const short = h => h ? h.slice(0,12) : "";
+const reqText = Object.fromEntries(D.jd.meta.requirements.map(r => [r.id, r]));
+const candById = Object.fromEntries(D.candidates.map(c => [c.meta.id, c]));
+
+function state(){
+  const p = new URLSearchParams(location.hash.slice(1));
+  return {view: p.get("view") || "screen", run: +(p.get("run") || 0), cand: p.get("cand") || D.candidates[0].meta.id,
+          file: p.get("file") || ""};
+}
+function link(o){ const s = {...state(), ...o}; const p = new URLSearchParams(); for (const k in s) if (s[k] !== "" && s[k] != null) p.set(k, s[k]); return "#" + p.toString(); }
+
+function navHtml(s){
+  const tabs = [["screen","Pre-screen"],["swap","Model swap"],["store","Store files"]];
+  return tabs.map(([v,l]) => `<a href="${link({view:v})}" class="${s.view===v?"on":""}">${l}</a>`).join("");
+}
+
+function jdCard(s){
+  const r = D.runs[s.run];
+  return `<div class="card">
+    <h2>Job description</h2>
+    <h3>${esc(D.jd.meta.title)}</h3>
+    <div class="muted small">${esc(D.jd.meta.id)} · ${esc(D.jd.meta.site)} · <b>synthetic</b></div>
+    <div style="margin-top:10px">${D.jd.meta.requirements.map(q => `<div class="req"><span class="rid">${q.id}</span><span>${esc(q.text)} <span class="kind">${q.kind}</span></span></div>`).join("")}</div>
+    <h2 style="margin-top:18px">Model run</h2>
+    <div class="runs">${D.runs.map((x,i) => `<a class="run ${i===s.run?"on":""}" href="${link({run:i})}"><b>${esc(runLabel(x,i))}</b><span class="muted">${esc(x.model)} · ${esc(x.provider)}</span></a>`).join("")}</div>
+    <div class="muted small" style="margin-top:8px">Model is config. Store is the same for every run.</div>
+  </div>`;
+}
+function runLabel(x,i){ return `Run ${"AB"[i] || i+1} · ${x.id.split("-").slice(1).join("-") || x.id}`; }
+
+function candList(s){
+  const groups = [["internal","Internal candidates · shown first"],["external","External candidates"]];
+  return `<div class="card">${groups.map(([g,label]) => {
+    const list = D.candidates.filter(c => c.meta.pool === g);
+    return `<div class="group"><span>${label}</span><span>${list.length}</span></div>` + list.map(c => {
+      const dec = D.decisions[c.meta.id];
+      return `<a class="cand ${c.meta.id===s.cand?"on":""}" href="${link({cand:c.meta.id})}">
+        <div class="nm">${esc(c.meta.display_name)}</div>
+        <div class="meta">${esc(c.meta.current_role)}</div>
+        <div style="margin-top:4px"><span class="pill ${g==="internal"?"int":""}">${esc(c.meta.source_system)}</span>${dec?`<span class="pill dec">decided: ${esc(dec.latest)}</span>`:`<span class="pill">decision pending</span>`}</div>
+      </a>`;}).join("");
+  }).join("")}
+  <div class="muted small" style="margin-top:10px">Order inside each group is by candidate ID, not by merit.</div></div>`;
+}
+
+function evidenceBlock(sum){
+  const m = sum.meta;
+  return `${(m.evidence||[]).map(r => `<div class="ev">
+      <div class="evh"><span class="rid">${esc(r.id)}</span><span class="st ${esc(r.status)}">${esc(r.status)}</span><span class="rt">${esc(reqText[r.id]?.text)}</span></div>
+      ${(r.evidence||[]).map(e => `<blockquote>${esc(String(e.quote).replace(/^#+\s*/,""))}<span class="chk ${e.verified?"":"bad"}">${e.verified?"✓ quoted verbatim from profile":"⚠ not found in profile"}</span></blockquote>`).join("")}
+      ${r.note?`<div class="note">${esc(r.note)}</div>`:""}
+    </div>`).join("")}`;
+}
+
+function detail(s){
+  const run = D.runs[s.run]; const c = candById[s.cand]; const sum = run?.summaries[s.cand];
+  if (!sum) return `<div class="card">No summary for ${esc(s.cand)} in this run.</div>`;
+  const m = sum.meta; const dec = D.decisions[s.cand];
+  const cmd = d => `python3 cli.py decide ${s.cand} ${d} --by "TA: <name>" --run ${run.id}`;
+  return `<div class="card">
+    <h2>Evidence summary · ${esc(runLabel(run,s.run))}</h2>
+    <h3>${esc(c.meta.display_name)} <span class="pill ${c.meta.pool==="internal"?"int":""}">${esc(c.meta.pool)}</span></h3>
+    <div class="muted small">${esc(c.meta.current_role)} · source: ${esc(c.meta.source_ref)}</div>
+    <p style="margin:12px 0 4px">${esc(m.summary)}</p>
+    ${evidenceBlock(sum)}
+    ${(m.open_points||[]).length?`<div class="ev"><b class="small">Open points to verify</b><ul class="small" style="margin:6px 0 0;padding-left:18px">${m.open_points.map(p=>`<li>${esc(p)}</li>`).join("")}</ul></div>`:""}
+    <div class="gate">
+      <b>Decision · TA / hiring manager</b>
+      <div class="small">The system proposes evidence. It does not decide. ${dec?`Latest decision: <b>${esc(dec.latest)}</b>`:`No decision recorded yet.`}</div>
+      <div class="btns">${["advance","hold","decline"].map(d=>`<button onclick="navigator.clipboard&&navigator.clipboard.writeText('${cmd(d).replace(/'/g,"\\'")}');this.textContent='copied: ${d}'">${d[0].toUpperCase()+d.slice(1)}</button>`).join("")}</div>
+      <div class="small muted">Recorded in <code>store/decisions/${esc(s.cand)}.md</code> (append-only) with <code>${esc(cmd("&lt;decision&gt;"))}</code></div>
+      ${dec?`<ul class="small" style="margin:8px 0 0;padding-left:18px">${dec.entries.map(e=>`<li>${esc(e.replace(/\*\*/g,""))}</li>`).join("")}</ul>`:""}
+    </div>
+    <div class="prov">file: ${esc(sum.ref)}<br>model: ${esc(m.model)} via ${esc(m.provider)} · ${esc(m.created_utc)}<br>reads: ${esc(m.candidate_ref)} @ ${short(m.candidate_sha256)} · ${esc(m.jd_ref)} @ ${short(m.jd_sha256)}<br>quotes verified: ${m.checks.quotes_verified}/${m.checks.quotes_total} · scored: ${m.scored} · ranked: ${m.ranked}${m.checks.warnings.length?`<br>warnings: ${esc(m.checks.warnings.join("; "))}`:""}</div>
+  </div>`;
+}
+
+function screenView(s){ return `<div class="grid">${jdCard(s)}${candList(s)}${detail(s)}</div>`; }
+
+function swapView(s){
+  if (D.runs.length < 2) return `<div class="card">Needs two runs.</div>`;
+  const [A,B] = D.runs; const c = candById[s.cand];
+  const sa = A.summaries[s.cand], sb = B.summaries[s.cand];
+  const rows = D.candidates.map(x => {
+    const id = x.meta.id, a = A.summaries[id]?.meta.candidate_sha256, b = B.summaries[id]?.meta.candidate_sha256;
+    const same = a === x.sha256 && b === x.sha256;
+    return `<tr><td><a href="${link({cand:id})}">${esc(id)}</a></td><td class="h">${short(x.sha256)}</td><td class="h">${short(a)}</td><td class="h">${short(b)}</td><td class="${same?"same":"diff"}">${same?"same file":"DIFFERENT"}</td></tr>`;
+  }).join("");
+  return `<div class="banner ${D.raw_ok?"":"bad"}">${D.raw_ok?"✓ Raw store unchanged after both runs: every raw file matches store/MANIFEST.md":"⚠ Raw store does not match manifest"}</div>
+  <div class="card" style="margin-bottom:16px">
+    <h2>Replace runtime · keep state</h2>
+    <div class="small">Same JD, same candidate files, two different models. Each run writes its own folder under <code>store/curated/</code>; neither run can edit raw files or the other run.</div>
+    <table style="margin-top:10px"><tr><th>Candidate</th><th>Raw file now</th><th>Read by ${esc(runLabel(A,0))}</th><th>Read by ${esc(runLabel(B,1))}</th><th></th></tr>${rows}</table>
+  </div>
+  <div class="card" style="margin-bottom:12px"><b>${esc(c.meta.display_name)}</b> <span class="muted small">— pick another candidate in the table above</span></div>
+  <div class="two">
+    <div class="card"><h2>${esc(runLabel(A,0))} · ${esc(A.model)}</h2><p>${esc(sa?.meta.summary)}</p>${sa?evidenceBlock(sa):""}</div>
+    <div class="card"><h2>${esc(runLabel(B,1))} · ${esc(B.model)}</h2><p>${esc(sb?.meta.summary)}</p>${sb?evidenceBlock(sb):""}</div>
+  </div>`;
+}
+
+function storeView(s){
+  const files = [];
+  files.push({dir:"store/raw/jd/", items:[{path:D.jd.ref, text:"---\n"+jsonYaml(D.jd.meta)+"---\n"+D.jd.body, lock:true}]});
+  files.push({dir:"store/raw/candidates/", items:D.candidates.map(c=>({path:c.ref, text:"---\n"+jsonYaml(c.meta)+"---\n"+c.body, lock:true}))});
+  D.runs.forEach(r => files.push({dir:`store/curated/${r.id}/`, items:Object.values(r.summaries).map(x=>({path:x.ref, text:x.frontmatter}))}));
+  files.push({dir:"store/", items:[{path:"store/MANIFEST.md", text:D.manifest, lock:true}]});
+  const all = files.flatMap(f=>f.items); const cur = all.find(f=>f.path===s.file) || all.find(f=>f.path.includes("/curated/")) || all[0];
+  return `<div class="grid" style="grid-template-columns:340px 1fr">
+    <div class="card tree"><h2>Store · owned by the organisation</h2>${files.map(f=>`<div class="dir">${esc(f.dir)}</div>${f.items.map(i=>`<a class="${i.path===cur.path?"on":""}" href="${link({file:i.path})}">${esc(i.path.split("/").pop())} ${i.lock?'<span class="lock">read-only</span>':""}</a>`).join("")}`).join("")}
+      <div class="muted small" style="margin-top:12px">raw = immutable source · curated = one folder per model run · decisions = human, append-only</div></div>
+    <div class="card"><h2>${esc(cur.path)}</h2><pre>${esc(cur.text)}</pre></div>
+  </div>`;
+}
+function jsonYaml(o){ return Object.entries(o).map(([k,v]) => typeof v === "object" ? `${k}: ${JSON.stringify(v)}\n` : `${k}: ${v}\n`).join(""); }
+
+function render(){
+  const s = state();
+  $("#nav").innerHTML = navHtml(s);
+  $("#app").innerHTML = s.view === "swap" ? swapView(s) : s.view === "store" ? storeView(s) : screenView(s);
+}
+addEventListener("hashchange", render); render();
+</script>
+</body>
+</html>

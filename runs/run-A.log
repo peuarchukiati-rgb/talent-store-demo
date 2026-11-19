@@ -1,0 +1,10 @@
+run A-openai-gpt: OpenAI GPT-5.6 (gpt-5.6-sol) · JD-SC-014 · 8 candidates
+  C-001 [internal] 18.6s
+  C-002 [internal] 17.9s
+  C-003 [internal] 19.6s
+  C-004 [external] 19.1s
+  C-005 [external] 14.3s
+  C-006 [external] 18.6s
+  C-007 [external] 17.5s
+  C-008 [external] 15.6s
+raw layer after run: unchanged (matches manifest)
