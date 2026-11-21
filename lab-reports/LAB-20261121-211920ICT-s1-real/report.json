@@ -237,7 +237,8 @@
   "notes": [
     "Overlap status maps (synthetic, two real models): {'C-001': {'openai': {'R1': 'evidenced', 'R2': 'partial', 'R3': 'evidenced', 'R4': 'evidenced', 'R5': 'evidenced', 'N1': 'evidenced', 'N2': 'evidenced', 'N3': 'evidenced'}, 'claude': {'R1': 'evidenced', 'R2': 'evidenced', 'R3': 'evidenced', 'R4': 'partial', 'R5': 'partial', 'N1': 'evidenced', 'N2': 'evidenced', 'N3': 'evidenced'}}, 'C-007': {'openai': {'R1': 'evidenced', 'R2': 'partial', 'R3': 'partial', 'R4': 'evidenced', 'R5': 'partial', 'N1': 'not_found', 'N2': 'partial', 'N3': 'not_found'}, 'claude': {'R1': 'partial', 'R2': 'partial', 'R3': 'partial', 'R4': 'evidenced', 'R5': 'partial', 'N1': 'not_found', 'N2': 'partial', 'N3': 'not_found'}}}",
     "Swap granularity: the handoff boundary is a whole candidate; A did ['C-001', 'C-002', 'C-003', 'C-004', 'C-005'], B did ['C-006', 'C-007', 'C-008', 'C-009']. No candidate is split across models.",
-    "Gemini and Azure are implemented provider adapters but were not run here (no API key / no tenant). Recorded as NOT RUN, never faked; the handoff mechanism is model-agnostic by config."
+    "Gemini and Azure are implemented provider adapters but were not run here (no API key / no tenant). Recorded as NOT RUN, never faked; the handoff mechanism is model-agnostic by config.",
+    "Annotated after the run (NOT RUN rows, inputs, outputs, CLI versions); run executed at 8c26f6a, tagged `lab-real-run`; engine code (talentstore/, cli.py, config/) is byte-identical at lab-clean."
   ],
   "counts": {
     "PASS": 12,

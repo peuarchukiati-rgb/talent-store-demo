@@ -114,9 +114,7 @@ committed `store/` is never touched.
 
 ## License
 
-MIT — see `LICENSE`. The license covers the code; the synthetic job
-descriptions and candidate profiles in this repository are invented for the
-demo and are included under the same MIT terms.
+MIT covers the demo code and synthetic data in this repository only. See `LICENSE`.
 
 ## Out of scope for this prototype
 

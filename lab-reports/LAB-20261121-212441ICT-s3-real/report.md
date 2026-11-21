@@ -52,3 +52,6 @@
 - Outputs above are the committed synthetic model assessments for the 3+3 control/injected repeats per model, so a reviewer can re-hash them. This is the original real run; its FAIL verdict is unchanged.
 
 Logs: `lab-reports/LAB-20261121-212441ICT-s3-real/logs`
+
+## Provenance
+- Annotated after the run (NOT RUN rows, inputs, outputs, CLI versions); run executed at 8c26f6a, tagged `lab-real-run`; engine code (talentstore/, cli.py, config/) is byte-identical at lab-clean.

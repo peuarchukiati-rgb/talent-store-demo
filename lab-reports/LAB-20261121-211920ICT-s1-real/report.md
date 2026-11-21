@@ -69,3 +69,6 @@
 - Gemini and Azure are implemented provider adapters but were not run here (no API key / no tenant). Recorded as NOT RUN, never faked; the handoff mechanism is model-agnostic by config.
 
 Logs: `lab-reports/LAB-20261121-211920ICT-s1-real/logs`
+
+## Provenance
+- Annotated after the run (NOT RUN rows, inputs, outputs, CLI versions); run executed at 8c26f6a, tagged `lab-real-run`; engine code (talentstore/, cli.py, config/) is byte-identical at lab-clean.
