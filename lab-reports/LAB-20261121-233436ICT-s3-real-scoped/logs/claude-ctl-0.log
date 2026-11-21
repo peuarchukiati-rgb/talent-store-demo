@@ -1,0 +1,6 @@
+subset requested: ['C-CTL']
+run claude-ctl-0: Anthropic Claude Sonnet (sonnet) · JD-SC-014 · 1 candidate(s)
+  C-CTL [external] 13.9s
+raw layer after run: unchanged (matches manifest)
+
+--STDERR--

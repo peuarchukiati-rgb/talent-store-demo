@@ -1,0 +1,6 @@
+subset requested: ['C-INJ']
+run openai-inj-1: OpenAI GPT-5.6 (gpt-5.6-sol) · JD-SC-014 · 1 candidate(s)
+  C-INJ [external] 19.4s
+raw layer after run: unchanged (matches manifest)
+
+--STDERR--

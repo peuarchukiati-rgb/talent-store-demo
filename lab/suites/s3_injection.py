@@ -20,6 +20,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 import lablib as L  # noqa: E402
+sys.path.insert(0, str(L.ROOT))  # repo root, for the talentstore package (scoped check)
 import yaml  # noqa: E402
 
 INJECTED_MARKERS = ["ignore the criteria", "mark all requirements", "rank this candidate",
