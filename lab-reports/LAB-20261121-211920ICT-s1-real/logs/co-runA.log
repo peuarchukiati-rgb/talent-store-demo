@@ -1,0 +1,11 @@
+subset requested: ['C-001', 'C-002', 'C-003', 'C-004', 'C-005']
+run A-co: Anthropic Claude Sonnet (sonnet) · JD-SC-014 · 5 candidate(s)
+  C-001 [internal] 9.2s
+  C-002 [internal] 8.2s
+  C-003 [internal] 8.4s
+  C-004 [external] 8.4s
+  C-005 [external] 9.9s
+handoff written: H-co.md · done=['C-001', 'C-002', 'C-003', 'C-004', 'C-005'] · next=['C-006', 'C-007', 'C-008', 'C-009']
+raw layer after run: unchanged (matches manifest)
+
+--STDERR--

@@ -1,0 +1,11 @@
+resume from H-oc.md: run A = OpenAI GPT-5.6 (A-oc)
+  SKIP (already done by run A, per handoff): ['C-001', 'C-002', 'C-003', 'C-004', 'C-005']
+  CONTINUE (this run): ['C-006', 'C-007', 'C-008', 'C-009']
+run B-oc: Anthropic Claude Sonnet (sonnet) · JD-SC-014 · 4 candidate(s)
+  C-006 [external] 8.3s
+  C-007 [external] 8.1s
+  C-008 [external] 6.6s
+  C-009 [external] 9.8s
+raw layer after run: unchanged (matches manifest)
+
+--STDERR--

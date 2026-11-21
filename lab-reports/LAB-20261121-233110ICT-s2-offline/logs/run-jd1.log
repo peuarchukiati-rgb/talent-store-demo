@@ -1,0 +1,13 @@
+run JD1: Deterministic offline stub (no model, no key, no network) (stub-v1) · JD-SC-014 · 9 candidate(s)
+  C-001 [internal] 0.0s
+  C-002 [internal] 0.0s
+  C-003 [internal] 0.0s
+  C-004 [external] 0.0s
+  C-005 [external] 0.0s
+  C-006 [external] 0.0s
+  C-007 [external] 0.0s
+  C-008 [external] 0.0s
+  C-009 [external] 0.0s
+raw layer after run: unchanged (matches manifest)
+
+--STDERR--

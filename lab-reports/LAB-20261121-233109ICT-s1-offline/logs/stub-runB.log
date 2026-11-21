@@ -1,0 +1,11 @@
+resume from H-stub.md: run A = Deterministic offline stub (no model, no key, no network) (A-stub)
+  SKIP (already done by run A, per handoff): ['C-001', 'C-002', 'C-003', 'C-004', 'C-005']
+  CONTINUE (this run): ['C-006', 'C-007', 'C-008', 'C-009']
+run B-stub: Deterministic offline stub (no model, no key, no network) (stub-v1) · JD-SC-014 · 4 candidate(s)
+  C-006 [external] 0.0s
+  C-007 [external] 0.0s
+  C-008 [external] 0.0s
+  C-009 [external] 0.0s
+raw layer after run: unchanged (matches manifest)
+
+--STDERR--

@@ -1,0 +1,86 @@
+[
+  {
+    "run_id": "LAB-20261121-233109ICT-s1-offline",
+    "suite": "s1",
+    "mode": "offline",
+    "models": "stub/stub-v1",
+    "pass": 5,
+    "fail": 0,
+    "not_run": 1,
+    "git_commit": "4b975087727cf216cc652571692a7b0fcfc8dbfd",
+    "timestamp_ict": "2026-11-21 23:31:09 ICT",
+    "report": "lab-reports/LAB-20261121-233109ICT-s1-offline/report.md"
+  },
+  {
+    "run_id": "LAB-20261121-211920ICT-s1-real",
+    "suite": "s1",
+    "mode": "real",
+    "models": "codex_cli/gpt-5.6-sol+claude_cli/sonnet",
+    "pass": 12,
+    "fail": 0,
+    "not_run": 2,
+    "git_commit": "8c26f6a6a01d789d9746c2a5f8aae0f42f6e6d64",
+    "timestamp_ict": "2026-11-21 21:19:20 ICT",
+    "report": "lab-reports/LAB-20261121-211920ICT-s1-real/report.md"
+  },
+  {
+    "run_id": "LAB-20261121-233110ICT-s2-offline",
+    "suite": "s2",
+    "mode": "offline",
+    "models": "stub/stub-v1",
+    "pass": 5,
+    "fail": 0,
+    "not_run": 0,
+    "git_commit": "4b975087727cf216cc652571692a7b0fcfc8dbfd",
+    "timestamp_ict": "2026-11-21 23:31:10 ICT",
+    "report": "lab-reports/LAB-20261121-233110ICT-s2-offline/report.md"
+  },
+  {
+    "run_id": "LAB-20261121-233110ICT-s3-offline",
+    "suite": "s3",
+    "mode": "offline",
+    "models": "stub/stub-v1",
+    "pass": 5,
+    "fail": 0,
+    "not_run": 0,
+    "git_commit": "4b975087727cf216cc652571692a7b0fcfc8dbfd",
+    "timestamp_ict": "2026-11-21 23:31:10 ICT",
+    "report": "lab-reports/LAB-20261121-233110ICT-s3-offline/report.md"
+  },
+  {
+    "run_id": "LAB-20261121-212441ICT-s3-real",
+    "suite": "s3",
+    "mode": "real",
+    "models": "codex_cli/gpt-5.6-sol+claude_cli/sonnet",
+    "pass": 9,
+    "fail": 1,
+    "not_run": 0,
+    "git_commit": "8c26f6a6a01d789d9746c2a5f8aae0f42f6e6d64",
+    "timestamp_ict": "2026-11-21 21:24:41 ICT",
+    "report": "lab-reports/LAB-20261121-212441ICT-s3-real/report.md"
+  },
+  {
+    "run_id": "LAB-20261121-233110ICT-s4-offline",
+    "suite": "s4",
+    "mode": "offline",
+    "models": "stub/stub-v1",
+    "pass": 6,
+    "fail": 0,
+    "not_run": 0,
+    "git_commit": "4b975087727cf216cc652571692a7b0fcfc8dbfd",
+    "timestamp_ict": "2026-11-21 23:31:10 ICT",
+    "report": "lab-reports/LAB-20261121-233110ICT-s4-offline/report.md"
+  },
+  {
+    "run_id": "LAB-20261121-233110ICT-s5-offline",
+    "suite": "s5",
+    "mode": "offline",
+    "models": "stub/stub-v1",
+    "pass": 3,
+    "fail": 0,
+    "not_run": 0,
+    "git_commit": "4b975087727cf216cc652571692a7b0fcfc8dbfd",
+    "timestamp_ict": "2026-11-21 23:31:10 ICT",
+    "report": "lab-reports/LAB-20261121-233110ICT-s5-offline/report.md"
+  }
+]

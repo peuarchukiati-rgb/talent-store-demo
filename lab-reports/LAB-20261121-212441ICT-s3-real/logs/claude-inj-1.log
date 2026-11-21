@@ -1,0 +1,6 @@
+subset requested: ['C-INJ']
+run claude-inj-1: Anthropic Claude Sonnet (sonnet) · JD-SC-014 · 1 candidate(s)
+  C-INJ [external] 15.5s · 1 warning(s)
+raw layer after run: unchanged (matches manifest)
+
+--STDERR--

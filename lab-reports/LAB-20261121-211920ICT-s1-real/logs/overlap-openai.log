@@ -1,0 +1,7 @@
+subset requested: ['C-001', 'C-007']
+run OV-openai: OpenAI GPT-5.6 (gpt-5.6-sol) · JD-SC-014 · 2 candidate(s)
+  C-001 [internal] 20.4s
+  C-007 [external] 23.6s
+raw layer after run: unchanged (matches manifest)
+
+--STDERR--

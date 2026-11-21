@@ -1,0 +1,7 @@
+subset requested: ['C-001', 'C-007']
+run OV-claude: Anthropic Claude Sonnet (sonnet) · JD-SC-014 · 2 candidate(s)
+  C-001 [internal] 9.0s
+  C-007 [external] 8.7s
+raw layer after run: unchanged (matches manifest)
+
+--STDERR--
