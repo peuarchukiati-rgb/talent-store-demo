@@ -10,11 +10,13 @@ from __future__ import annotations
 import json
 import re
 import time
+import unicodedata
 from datetime import datetime, timezone
 from pathlib import Path
 
 from . import providers
-from .store import CURATED, load_candidates, load_jd, rel, sha256, verify_raw, write_md
+from .store import (CURATED, MANIFEST, load_candidates, load_jd, read_md, rel,
+                    sha256, verify_raw, write_md)
 
 SYSTEM = """You are a recruitment pre-screen assistant working for a hiring team.
 You compare ONE candidate profile with ONE job description and report evidence.
@@ -22,6 +24,8 @@ You compare ONE candidate profile with ONE job description and report evidence.
 Rules:
 - For each requirement id, set status to exactly one of: "evidenced", "partial", "not_found".
 - Every evidence item must be an exact, verbatim quote copied from the candidate profile (max 25 words). Never paraphrase inside "quote".
+- The profile may be written in a language other than English (for example Vietnamese). Quote it in its original language, with every diacritic exactly as written. Never translate inside "quote".
+- Write "note", "open_points" and "summary" in English, whatever the language of the profile.
 - Do not score, rate, rank, compare with other candidates, or recommend hire / reject / shortlist.
 - Do not infer or mention age, gender, marital status, health, religion, ethnicity or nationality.
 - "open_points" are factual gaps the recruiter may want to verify, phrased neutrally.
@@ -53,6 +57,12 @@ def _parse(text: str) -> dict:
 
 
 def _norm(s: str) -> str:
+    """Comparison form for the verbatim check.
+
+    NFC first: Vietnamese tone marks can arrive composed (U+1EC7) or decomposed
+    (e + U+0323 + U+0302) depending on the source app; both must compare equal.
+    """
+    s = unicodedata.normalize("NFC", s)
     return re.sub(r"\s+", " ", s.replace("’", "'").replace("–", "-")).strip().strip('"').lower()
 
 
@@ -101,7 +111,38 @@ def _render_body(cand_meta: dict, jd_meta: dict, result: dict) -> str:
     return "\n".join(lines)
 
 
-def run(jd_id: str, profile_name: str, config_path: str, run_id: str | None = None, log=print) -> Path:
+def _read_handoff(path: Path) -> dict:
+    meta, _ = read_md(path)
+    if meta.get("type") != "handoff":
+        raise SystemExit(f"{rel(path)} is not a handoff file (type={meta.get('type')!r})")
+    return meta
+
+
+def _write_handoff(path: Path, run_id: str, runtime_label: str, jd_id: str,
+                   done_entries: list[dict], next_ids: list[str]) -> Path:
+    meta = {
+        "type": "handoff",
+        "run_a_id": run_id,
+        "runtime_a": runtime_label,
+        "jd": jd_id,
+        "done": done_entries,
+        "next": next_ids,
+        "store_raw_manifest_sha": sha256(MANIFEST),
+        "created_utc": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+    }
+    body = (
+        f"# Handoff {path.stem} · pre-screen continuation\n\n"
+        f"Run A ({runtime_label}, `{run_id}`) completed {len(done_entries)} candidate(s) for {jd_id}.\n"
+        f"A later run continues the `next` list below; it must skip everything in `done`.\n"
+        f"The raw store is byte-identical: `store/MANIFEST.md` sha256 is pinned above.\n"
+    )
+    write_md(path, meta, body)
+    return path
+
+
+def run(jd_id: str, profile_name: str, config_path: str, run_id: str | None = None,
+        candidates: list[str] | None = None, handoff_out: str | None = None,
+        resume: str | None = None, log=print) -> Path:
     problems = verify_raw()
     if problems:
         raise SystemExit("refusing to run, raw layer does not match manifest:\n  " + "\n  ".join(problems))
@@ -116,9 +157,37 @@ def run(jd_id: str, profile_name: str, config_path: str, run_id: str | None = No
         raise SystemExit(f"run folder exists, refusing to overwrite: {rel(out_dir)}")
 
     jd_path, jd_meta, jd_body = load_jd(jd_id)
-    cands = load_candidates(jd_id)
-    log(f"run {run_id}: {profile['label']} ({model_id}) · {jd_id} · {len(cands)} candidates")
+    all_cands = load_candidates(jd_id)
+    all_ids = [c[1]["id"] for c in all_cands]
 
+    # Decide the subset this run will process.
+    subset_ids: list[str] | None = None
+    if resume:
+        hpath = Path(resume)
+        if not hpath.is_absolute():
+            hpath = MANIFEST.parent.parent / resume
+        handoff = _read_handoff(hpath)
+        done_ids = [d["id"] if isinstance(d, dict) else d for d in handoff.get("done", [])]
+        next_ids = list(handoff.get("next", []))
+        log(f"resume from {rel(hpath)}: run A = {handoff.get('runtime_a')} ({handoff.get('run_a_id')})")
+        log(f"  SKIP (already done by run A, per handoff): {done_ids or '(none)'}")
+        log(f"  CONTINUE (this run): {next_ids or '(none)'}")
+        subset_ids = next_ids
+    elif candidates:
+        subset_ids = [c.strip() for c in candidates if c.strip()]
+        log(f"subset requested: {subset_ids}")
+
+    if subset_ids is not None:
+        unknown = [c for c in subset_ids if c not in all_ids]
+        if unknown:
+            raise SystemExit(f"unknown candidate id(s) for {jd_id}: {unknown}")
+        cands = [c for c in all_cands if c[1]["id"] in subset_ids]
+    else:
+        cands = all_cands
+
+    log(f"run {run_id}: {profile['label']} ({model_id}) · {jd_id} · {len(cands)} candidate(s)")
+
+    done_entries: list[dict] = []
     for cand_path, cand_meta, cand_body in cands:
         t0 = time.time()
         raw_text = providers.call(profile, SYSTEM, _user_prompt(jd_meta, jd_body, cand_body))
@@ -149,9 +218,19 @@ def run(jd_id: str, profile_name: str, config_path: str, run_id: str | None = No
             "evidence": result.get("requirements", []),
             "open_points": result.get("open_points", []),
         }
-        write_md(out_dir / f"{cand_meta['id']}.md", meta, _render_body(cand_meta, jd_meta, result))
+        cand_out = out_dir / f"{cand_meta['id']}.md"
+        write_md(cand_out, meta, _render_body(cand_meta, jd_meta, result))
+        done_entries.append({"id": cand_meta["id"], "curated": rel(cand_out), "sha256": sha256(cand_out)})
         flag = f" · {len(warnings)} warning(s)" if warnings else ""
         log(f"  {cand_meta['id']} [{cand_meta.get('pool')}] {time.time() - t0:.1f}s{flag}")
+
+    if handoff_out:
+        next_ids = [i for i in all_ids if i not in {d["id"] for d in done_entries}]
+        hpath = Path(handoff_out)
+        if not hpath.is_absolute():
+            hpath = MANIFEST.parent.parent / handoff_out
+        _write_handoff(hpath, run_id, profile["label"], jd_id, done_entries, next_ids)
+        log(f"handoff written: {rel(hpath)} · done={[d['id'] for d in done_entries]} · next={next_ids}")
 
     problems = verify_raw()
     log("raw layer after run: " + ("unchanged (matches manifest)" if not problems else "CHANGED: " + "; ".join(problems)))

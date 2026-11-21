@@ -53,6 +53,9 @@ def main():
     ps.add_argument("--jd", default="JD-SC-014")
     ps.add_argument("--config", default=str(store.ROOT / "config" / "models.json"))
     ps.add_argument("--run-id")
+    ps.add_argument("--candidates", help="comma-separated subset, e.g. C-001,C-002 (only these are processed)")
+    ps.add_argument("--handoff", help="after the run, write a handoff file here (done + next lists)")
+    ps.add_argument("--resume", help="read a handoff file and process only its 'next' list, skipping 'done'")
     d = sub.add_parser("decide")
     d.add_argument("candidate")
     d.add_argument("decision", choices=sorted(DECISIONS))
@@ -73,7 +76,9 @@ def main():
         for k, v in store.hash_tree(store.STORE).items():
             print(f"{v}  {k}")
     elif a.cmd == "prescreen":
-        prescreen.run(a.jd, a.model, a.config, a.run_id)
+        cand_list = a.candidates.split(",") if a.candidates else None
+        prescreen.run(a.jd, a.model, a.config, a.run_id,
+                      candidates=cand_list, handoff_out=a.handoff, resume=a.resume)
     elif a.cmd == "decide":
         cmd_decide(a)
     elif a.cmd == "render":
