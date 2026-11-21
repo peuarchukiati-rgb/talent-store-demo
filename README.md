@@ -5,8 +5,9 @@ a recruitment pre-screen (BUC-1B, Talent Agent) that writes evidence
 summaries into a Markdown store, then re-runs on a second model while
 the store stays unchanged.
 
-**All data in this repo is synthetic.** The job description and the eight
-candidates are invented for the demo. No real person, client or employer data.
+**All data in this repo is synthetic.** The job description and the nine
+candidates (C-001…C-009; three internal, six external, one written in
+Vietnamese) are invented for the demo. No real person, client or employer data.
 
 ## What it proves
 
@@ -18,6 +19,19 @@ candidates are invented for the demo. No real person, client or employer data.
 2. **Replace runtime, keep state.** The same pre-screen runs on a second
    model. The raw store files are byte-identical before and after both runs
    (sha256 manifest), and each run writes only its own folder.
+3. **Reuse the same pool for a new opening.** A second job description is
+   screened against the same nine candidates with no re-ingest: every
+   candidate file is byte-identical before and after, and the new outputs
+   trace back to the same `candidate_sha256`. See the lab's reuse suite.
+
+## Evidence
+
+- `continuation-evidence/` — the recorded two-runtime continuation run
+  (hash tables, logs, claims) behind proof 2.
+- `lab-reports/` — the reproducible **test lab**: five suites (continuation,
+  reuse, prompt injection, erasure, reproducibility), each with a
+  machine-readable report and PASS/FAIL/NOT RUN assertions. `SUMMARY.md`
+  indexes every run. Anyone can re-run it (see "Run the lab" below).
 
 ## Switched off on purpose
 
@@ -34,7 +48,7 @@ candidates are invented for the demo. No real person, client or employer data.
 store/
   raw/            immutable source records (read-only files, hashed in MANIFEST.md)
     jd/JD-SC-014.md
-    candidates/C-001.md … C-008.md
+    candidates/C-001.md … C-009.md
   curated/        one folder per model run; a run never edits raw or another run
     A-openai-gpt/C-001.md …
     B-claude-sonnet/C-001.md …
@@ -80,8 +94,36 @@ python3 cli.py render                        # build site/index.html (read-only 
 
 `runs/` holds the recorded logs and before/after hash lists.
 
+## Run the lab
+
+A reproducible test lab exercises the engine end to end. Offline mode needs
+**no API key, no CLI and no network**, and two offline runs produce identical
+output hashes.
+
+```sh
+make lab                   # all five suites, offline
+./lab/run.sh --mode offline # same thing, without make
+make lab-3                  # one suite (3 = prompt injection); make lab-1 … lab-5
+./lab/run.sh --suite 3 --mode offline   # same, without make
+./lab/run.sh --mode real   # real mode: local codex + claude CLIs (no API key)
+```
+
+Reports land in `lab-reports/<run_id>/` with `SUMMARY.md` at the top. Each suite
+runs on a throwaway copy of the store under `lab/work/` (gitignored); the
+committed `store/` is never touched.
+
+## License
+
+MIT — see `LICENSE`. The license covers the code; the synthetic job
+descriptions and candidate profiles in this repository are invented for the
+demo and are included under the same MIT terms.
+
 ## Out of scope for this prototype
 
 Interview insights, HRIS/SuccessFactors integration, candidate community,
-job scraping or external chat, re-using an old pool for a new opening,
-a second reader on the same pool.
+job scraping or external chat, a second reader on the same pool.
+**Access control (tenant identity, role-based permissions) is out of scope**
+here — it is a deployment-side concern, not exercised by this demo or its lab.
+
+(Re-using an old pool for a new opening was previously out of scope; it is now
+shown — see proof 3 and the lab's reuse suite report.)
