@@ -11,11 +11,20 @@
 from __future__ import annotations
 
 import argparse
+import os
 import sys
-from datetime import datetime, timezone
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+
+# Additive (lab): --store points the engine at a lab store copy. The store root
+# is resolved at import time (TSD_STORE_ROOT), so set it before importing the
+# package. The env var is the primary mechanism; this makes --store a shortcut.
+for _i, _arg in enumerate(sys.argv):
+    if _arg == "--store" and _i + 1 < len(sys.argv):
+        os.environ["TSD_STORE_ROOT"] = sys.argv[_i + 1]
+    elif _arg.startswith("--store="):
+        os.environ["TSD_STORE_ROOT"] = _arg.split("=", 1)[1]
 
 from talentstore import prescreen, store  # noqa: E402
 
@@ -24,7 +33,7 @@ DECISIONS = {"advance", "hold", "decline"}
 
 def cmd_decide(a):
     path = store.DECISIONS / f"{a.candidate}.md"
-    now = datetime.now(timezone.utc).isoformat(timespec="seconds")
+    now = store.now_utc().isoformat(timespec="seconds")
     entry = f"- {now} · **{a.decision}** · by {a.by} · on JD {a.jd} · basis: {a.run or 'latest summary'}" + \
             (f" · note: {a.note}" if a.note else "")
     if path.exists():
@@ -41,14 +50,23 @@ def cmd_decide(a):
     print(f"recorded: {a.candidate} → {a.decision} ({store.rel(path)})")
 
 
+def cmd_erase(a):
+    record = store.erase_candidate(a.candidate)
+    print(f"erased {a.candidate}: removed {len(record['removed'])} file(s), "
+          f"modified {len(record['modified'])} file(s) (lab store {store.rel(store.STORE)})")
+
+
 def main():
     p = argparse.ArgumentParser()
+    # --store is also parsed here (consumed early via env) so it appears in help.
+    common = argparse.ArgumentParser(add_help=False)
+    common.add_argument("--store", help="store-root override (lab copy); also TSD_STORE_ROOT env")
     sub = p.add_subparsers(dest="cmd", required=True)
-    sub.add_parser("seal")
-    sub.add_parser("verify")
-    sub.add_parser("hashes")
-    sub.add_parser("render")
-    ps = sub.add_parser("prescreen")
+    sub.add_parser("seal", parents=[common])
+    sub.add_parser("verify", parents=[common])
+    sub.add_parser("hashes", parents=[common])
+    sub.add_parser("render", parents=[common])
+    ps = sub.add_parser("prescreen", parents=[common])
     ps.add_argument("--model", required=True)
     ps.add_argument("--jd", default="JD-SC-014")
     ps.add_argument("--config", default=str(store.ROOT / "config" / "models.json"))
@@ -56,13 +74,17 @@ def main():
     ps.add_argument("--candidates", help="comma-separated subset, e.g. C-001,C-002 (only these are processed)")
     ps.add_argument("--handoff", help="after the run, write a handoff file here (done + next lists)")
     ps.add_argument("--resume", help="read a handoff file and process only its 'next' list, skipping 'done'")
-    d = sub.add_parser("decide")
+    ps.add_argument("--pool-from", help="screen the pool that applied for this JD id against --jd")
+    ps.add_argument("--pool-all", action="store_true", help="screen every candidate profile against --jd")
+    d = sub.add_parser("decide", parents=[common])
     d.add_argument("candidate")
     d.add_argument("decision", choices=sorted(DECISIONS))
     d.add_argument("--by", required=True)
     d.add_argument("--jd", default="JD-SC-014")
     d.add_argument("--run")
     d.add_argument("--note")
+    e = sub.add_parser("erase", parents=[common])
+    e.add_argument("candidate")
     a = p.parse_args()
 
     if a.cmd == "seal":
@@ -78,9 +100,12 @@ def main():
     elif a.cmd == "prescreen":
         cand_list = a.candidates.split(",") if a.candidates else None
         prescreen.run(a.jd, a.model, a.config, a.run_id,
-                      candidates=cand_list, handoff_out=a.handoff, resume=a.resume)
+                      candidates=cand_list, handoff_out=a.handoff, resume=a.resume,
+                      pool_from=a.pool_from, pool_all=a.pool_all)
     elif a.cmd == "decide":
         cmd_decide(a)
+    elif a.cmd == "erase":
+        cmd_erase(a)
     elif a.cmd == "render":
         from talentstore import render
         out = render.build()

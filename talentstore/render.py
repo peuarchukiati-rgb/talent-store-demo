@@ -8,7 +8,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from .store import CURATED, DECISIONS, MANIFEST, ROOT, load_candidates, load_jd, read_md, rel, sha256, verify_raw
+from .store import CURATED, DECISIONS, MANIFEST, ROOT, STORE, load_candidates, load_jd, read_md, rel, sha256, verify_raw
 
 JD_ID = "JD-SC-014"
 
@@ -48,7 +48,9 @@ def _snapshot() -> dict:
 def build() -> Path:
     data = json.dumps(_snapshot(), ensure_ascii=False, default=str).replace("</", "<\\/")
     html = (ROOT / "talentstore" / "viewer.html").read_text(encoding="utf-8").replace("/*__DATA__*/null", data)
-    out = ROOT / "site" / "index.html"
+    # Additive (lab): render beside the active store. Default STORE.parent == ROOT,
+    # so the committed site stays at site/index.html.
+    out = STORE.parent / "site" / "index.html"
     out.parent.mkdir(exist_ok=True)
     out.write_text(html, encoding="utf-8")
     return out
