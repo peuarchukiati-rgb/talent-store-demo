@@ -1,0 +1,9 @@
+resume from store/handoffs/H-001.md: run A = OpenAI GPT-5.6 (A-openai)
+  SKIP (already done by run A, per handoff): ['C-001', 'C-002', 'C-003', 'C-004', 'C-005']
+  CONTINUE (this run): ['C-006', 'C-007', 'C-008', 'C-009']
+run B-claude: Anthropic Claude Sonnet (sonnet) · JD-SC-014 · 4 candidate(s)
+  C-006 [external] 8.1s
+  C-007 [external] 8.4s
+  C-008 [external] 7.3s
+  C-009 [external] 19.4s
+raw layer after run: unchanged (matches manifest)

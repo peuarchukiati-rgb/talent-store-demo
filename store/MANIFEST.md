@@ -10,4 +10,5 @@ Raw layer hashes, written at seal time. Raw is immutable.
 - `store/raw/candidates/C-006.md` sha256:8507f8e5c645bf7a3e6eead0074addfdbef92cf1c0409a055a56b0f798f651fe
 - `store/raw/candidates/C-007.md` sha256:774b53bed292fc3d194be9e0cbfb88ac25f346677106a2aacd7c18f46138b82e
 - `store/raw/candidates/C-008.md` sha256:a5a3aefd9de197cc953212e9baa50d7e61d0900ea0f3f87c63b79588e2926760
+- `store/raw/candidates/C-009.md` sha256:c0ae28d746ab8930e6e07c803af15c5316c05bc154b9580bcc62656a97d86256
 - `store/raw/jd/JD-SC-014.md` sha256:0e47869bc2378ce106dc7975ce4c87ad395d89c4705a7865085ddf859390f8f0

@@ -1,0 +1,1 @@
+Two runtimes, one handoff. SHOWN: OpenAI GPT-5.6 pre-screened candidates C-001–C-005, wrote handoff H-001, then Claude Sonnet resumed and continued C-006–C-009 - skipping A's done list. All 9 candidates screened across two models; the raw store stayed byte-identical (sha unchanged) and B never touched A's files. State carried; runtime swapped mid-run.

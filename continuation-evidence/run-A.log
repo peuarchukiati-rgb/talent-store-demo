@@ -1,0 +1,9 @@
+subset requested: ['C-001', 'C-002', 'C-003', 'C-004', 'C-005']
+run A-openai: OpenAI GPT-5.6 (gpt-5.6-sol) · JD-SC-014 · 5 candidate(s)
+  C-001 [internal] 21.6s
+  C-002 [internal] 19.0s
+  C-003 [internal] 21.8s
+  C-004 [external] 19.1s
+  C-005 [external] 15.9s
+handoff written: store/handoffs/H-001.md · done=['C-001', 'C-002', 'C-003', 'C-004', 'C-005'] · next=['C-006', 'C-007', 'C-008', 'C-009']
+raw layer after run: unchanged (matches manifest)
