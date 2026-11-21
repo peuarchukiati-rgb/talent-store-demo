@@ -26,6 +26,11 @@
       "provider": "claude_cli",
       "model": "sonnet",
       "label": "Anthropic Claude Sonnet"
+    },
+    "stub": {
+      "provider": "stub",
+      "model": "stub-v1",
+      "label": "Deterministic offline stub (no model, no key, no network)"
     }
   }
 }

@@ -7,14 +7,96 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import shutil
 import subprocess
 import tempfile
 import urllib.request
 
+from .store import detect_injection
+
 
 class ProviderError(RuntimeError):
     pass
+
+
+# --- stub provider (offline, deterministic) ---------------------------------
+# No key, no CLI, no network. Output is a pure function of the input text, so
+# two runs on the same inputs are byte-identical. Quotes are real substrings of
+# the profile, so the verbatim check in prescreen is genuinely exercised.
+
+_STOP = {
+    "the", "and", "for", "with", "has", "have", "run", "a", "an", "of", "in",
+    "or", "to", "at", "on", "least", "end", "least", "team", "data", "stated",
+    "works", "only", "not", "least", "least", "level", "least", "years", "year",
+}
+
+
+def _keywords(text: str) -> list[str]:
+    """Deterministic keyword list from a requirement sentence."""
+    words = re.findall(r"[a-zA-Z&/]+", text.lower())
+    seen, out = set(), []
+    for w in words:
+        w = w.strip("&/")
+        if len(w) >= 4 and w not in _STOP and w not in seen:
+            seen.add(w)
+            out.append(w)
+    return out
+
+
+def _clean_quote(line: str, limit: int = 25) -> str:
+    """A verbatim prefix of a profile line, markers stripped, <= limit words."""
+    q = line.lstrip("#").lstrip("-").lstrip("*").strip()
+    words = q.split()
+    return " ".join(words[:limit])
+
+
+def stub(cfg: dict, system: str, user: str) -> str:
+    """Deterministic offline pre-screen. Mechanical keyword evidence matching.
+
+    It is not a model: it cannot read Vietnamese or reason. Its only jobs are to
+    be reproducible and to feed the verbatim/BANNED/injection checks with real,
+    traceable substrings. Instruction-like lines (per the injection detector)
+    are never quoted as evidence.
+    """
+    m = re.search(r"<<<\n(.*)\n>>>", user, re.S)
+    profile = m.group(1).strip() if m else ""
+    req_lines = re.findall(r"^- (\S+) \((\w+)\): (.+)$", user, re.M)
+
+    flagged = {f["line"] for f in detect_injection(profile)}
+    prof_lines = [ln.strip() for ln in profile.splitlines() if ln.strip()]
+    safe_lines = [ln for ln in prof_lines if ln[:120] not in flagged]
+
+    requirements = []
+    counts = {"evidenced": 0, "partial": 0, "not_found": 0}
+    for rid, _kind, rtext in req_lines:
+        kws = _keywords(rtext)
+        evidence, matched_kw = [], set()
+        for ln in safe_lines:
+            low = ln.lower()
+            hit = [k for k in kws if k in low]
+            if hit:
+                matched_kw.update(hit)
+                if len(evidence) < 2:
+                    evidence.append({"quote": _clean_quote(ln)})
+        if len(matched_kw) >= 2:
+            status = "evidenced"
+        elif len(matched_kw) == 1:
+            status = "partial"
+        else:
+            status = "not_found"
+        counts[status] += 1
+        note = ("Keyword evidence located in the profile text."
+                if evidence else "No matching evidence located in the profile text.")
+        requirements.append({"id": rid, "status": status, "evidence": evidence, "note": note})
+
+    open_points = [f"Verify requirement {r['id']} with the candidate."
+                   for r in requirements if r["status"] != "evidenced"]
+    k = len(requirements)
+    summary = (f"Automated offline pre-screen over {k} requirement(s): "
+               f"{counts['evidenced']} evidenced, {counts['partial']} partial, "
+               f"{counts['not_found']} not_found. Evidence is quoted from the profile; a person reviews it.")
+    return json.dumps({"requirements": requirements, "open_points": open_points, "summary": summary})
 
 
 def _post_json(url: str, payload: dict, headers: dict, timeout: int = 180) -> dict:
@@ -108,7 +190,8 @@ def codex_cli(cfg: dict, system: str, user: str) -> str:
             return f.read()
 
 
-PROVIDERS = {"azure_openai": azure_openai, "gemini": gemini, "claude_cli": claude_cli, "codex_cli": codex_cli}
+PROVIDERS = {"azure_openai": azure_openai, "gemini": gemini, "claude_cli": claude_cli,
+             "codex_cli": codex_cli, "stub": stub}
 
 
 def load_config(path: str) -> dict:

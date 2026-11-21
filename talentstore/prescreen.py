@@ -15,8 +15,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from . import providers
-from .store import (CURATED, MANIFEST, load_candidates, load_jd, read_md, rel,
-                    sha256, verify_raw, write_md)
+from .store import (CURATED, MANIFEST, detect_injection, load_candidates,
+                    load_jd, now_utc, read_md, rel, sha256, verify_raw, write_md)
 
 SYSTEM = """You are a recruitment pre-screen assistant working for a hiring team.
 You compare ONE candidate profile with ONE job description and report evidence.
@@ -128,7 +128,7 @@ def _write_handoff(path: Path, run_id: str, runtime_label: str, jd_id: str,
         "done": done_entries,
         "next": next_ids,
         "store_raw_manifest_sha": sha256(MANIFEST),
-        "created_utc": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+        "created_utc": now_utc().isoformat(timespec="seconds"),
     }
     body = (
         f"# Handoff {path.stem} · pre-screen continuation\n\n"
@@ -142,7 +142,8 @@ def _write_handoff(path: Path, run_id: str, runtime_label: str, jd_id: str,
 
 def run(jd_id: str, profile_name: str, config_path: str, run_id: str | None = None,
         candidates: list[str] | None = None, handoff_out: str | None = None,
-        resume: str | None = None, log=print) -> Path:
+        resume: str | None = None, pool_from: str | None = None,
+        pool_all: bool = False, log=print) -> Path:
     problems = verify_raw()
     if problems:
         raise SystemExit("refusing to run, raw layer does not match manifest:\n  " + "\n  ".join(problems))
@@ -150,14 +151,14 @@ def run(jd_id: str, profile_name: str, config_path: str, run_id: str | None = No
     cfg = providers.load_config(config_path)
     profile = cfg["profiles"][profile_name]
     model_id = profile.get("model") or profile.get("deployment")
-    stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+    stamp = now_utc().strftime("%Y%m%dT%H%M%SZ")
     run_id = run_id or f"{stamp}-{profile_name}"
     out_dir = CURATED / run_id
     if out_dir.exists():
         raise SystemExit(f"run folder exists, refusing to overwrite: {rel(out_dir)}")
 
     jd_path, jd_meta, jd_body = load_jd(jd_id)
-    all_cands = load_candidates(jd_id)
+    all_cands = load_candidates(jd_id, pool_from=pool_from, pool_all=pool_all)
     all_ids = [c[1]["id"] for c in all_cands]
 
     # Decide the subset this run will process.
@@ -193,6 +194,7 @@ def run(jd_id: str, profile_name: str, config_path: str, run_id: str | None = No
         raw_text = providers.call(profile, SYSTEM, _user_prompt(jd_meta, jd_body, cand_body))
         result = _parse(raw_text)
         warnings = _check(result, jd_meta, cand_body)
+        injection_flags = detect_injection(cand_body)
         meta = {
             "type": "evidence_summary",
             "candidate": cand_meta["id"],
@@ -205,7 +207,7 @@ def run(jd_id: str, profile_name: str, config_path: str, run_id: str | None = No
             "run_id": run_id,
             "provider": profile["provider"],
             "model": model_id,
-            "created_utc": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+            "created_utc": now_utc().isoformat(timespec="seconds"),
             "status": "proposed",
             "decided_by": None,
             "scored": False,
@@ -213,7 +215,8 @@ def run(jd_id: str, profile_name: str, config_path: str, run_id: str | None = No
             "checks": {"quotes_total": sum(len(r.get("evidence") or []) for r in result.get("requirements", [])),
                        "quotes_verified": sum(1 for r in result.get("requirements", [])
                                               for e in (r.get("evidence") or []) if e.get("verified")),
-                       "warnings": warnings},
+                       "warnings": warnings,
+                       "injection_flags": injection_flags},
             "summary": result.get("summary", ""),
             "evidence": result.get("requirements", []),
             "open_points": result.get("open_points", []),
