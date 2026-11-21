@@ -1,0 +1,7 @@
+subset requested: ['C-CTL', 'C-INJ']
+run INJ: Deterministic offline stub (no model, no key, no network) (stub-v1) · JD-SC-014 · 2 candidate(s)
+  C-CTL [external] 0.0s
+  C-INJ [external] 0.0s
+raw layer after run: unchanged (matches manifest)
+
+--STDERR--

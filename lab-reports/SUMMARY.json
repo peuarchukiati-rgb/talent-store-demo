@@ -1,0 +1,62 @@
+[
+  {
+    "run_id": "LAB-20261121-211140ICT-s1-offline",
+    "suite": "s1",
+    "mode": "offline",
+    "models": "stub/stub-v1",
+    "pass": 5,
+    "fail": 0,
+    "not_run": 1,
+    "git_commit": "4b591f9aba9216a31a27a564ea546c1366f41cc3",
+    "timestamp_ict": "2026-11-21 21:11:40 ICT",
+    "report": "lab-reports/LAB-20261121-211140ICT-s1-offline/report.md"
+  },
+  {
+    "run_id": "LAB-20261121-211140ICT-s2-offline",
+    "suite": "s2",
+    "mode": "offline",
+    "models": "stub/stub-v1",
+    "pass": 5,
+    "fail": 0,
+    "not_run": 0,
+    "git_commit": "4b591f9aba9216a31a27a564ea546c1366f41cc3",
+    "timestamp_ict": "2026-11-21 21:11:40 ICT",
+    "report": "lab-reports/LAB-20261121-211140ICT-s2-offline/report.md"
+  },
+  {
+    "run_id": "LAB-20261121-211141ICT-s3-offline",
+    "suite": "s3",
+    "mode": "offline",
+    "models": "stub/stub-v1",
+    "pass": 5,
+    "fail": 0,
+    "not_run": 0,
+    "git_commit": "4b591f9aba9216a31a27a564ea546c1366f41cc3",
+    "timestamp_ict": "2026-11-21 21:11:41 ICT",
+    "report": "lab-reports/LAB-20261121-211141ICT-s3-offline/report.md"
+  },
+  {
+    "run_id": "LAB-20261121-211141ICT-s4-offline",
+    "suite": "s4",
+    "mode": "offline",
+    "models": "stub/stub-v1",
+    "pass": 6,
+    "fail": 0,
+    "not_run": 0,
+    "git_commit": "4b591f9aba9216a31a27a564ea546c1366f41cc3",
+    "timestamp_ict": "2026-11-21 21:11:41 ICT",
+    "report": "lab-reports/LAB-20261121-211141ICT-s4-offline/report.md"
+  },
+  {
+    "run_id": "LAB-20261121-211141ICT-s5-offline",
+    "suite": "s5",
+    "mode": "offline",
+    "models": "stub/stub-v1",
+    "pass": 3,
+    "fail": 0,
+    "not_run": 0,
+    "git_commit": "4b591f9aba9216a31a27a564ea546c1366f41cc3",
+    "timestamp_ict": "2026-11-21 21:11:41 ICT",
+    "report": "lab-reports/LAB-20261121-211141ICT-s5-offline/report.md"
+  }
+]

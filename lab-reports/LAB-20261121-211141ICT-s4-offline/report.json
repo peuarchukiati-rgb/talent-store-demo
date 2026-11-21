@@ -1,0 +1,78 @@
+{
+  "run_id": "LAB-20261121-211141ICT-s4-offline",
+  "timestamp_ict": "2026-11-21 21:11:41 ICT",
+  "git_commit": "4b591f9aba9216a31a27a564ea546c1366f41cc3",
+  "dirty_tree": true,
+  "mode": "offline",
+  "suite": "s4",
+  "models": [
+    {
+      "provider": "stub",
+      "model": "stub-v1"
+    }
+  ],
+  "inputs": [],
+  "outputs": [],
+  "assertions": [
+    {
+      "id": "s4.present_before",
+      "desc": "C-004 is present across the store + site before erasure",
+      "expected": "hits in raw/curated/decisions/handoffs/site",
+      "actual": "23 file-hits",
+      "status": "PASS"
+    },
+    {
+      "id": "s4.zero_hits",
+      "desc": "after erasure, C-004 id/name/unique-strings return zero hits everywhere",
+      "expected": "0 hits across raw, curated, decisions, handoffs, MANIFEST, site",
+      "actual": "0 hits ({})",
+      "status": "PASS"
+    },
+    {
+      "id": "s4.verify_after",
+      "desc": "raw layer still verifies after erasure + re-seal",
+      "expected": "raw layer OK",
+      "actual": "raw layer OK: matches manifest",
+      "status": "PASS"
+    },
+    {
+      "id": "s4.unrelated_intact",
+      "desc": "files unrelated to the erased candidate keep their sha256",
+      "expected": "no unrelated file changed",
+      "actual": "all intact",
+      "status": "PASS"
+    },
+    {
+      "id": "s4.changeset_bounded",
+      "desc": "only the target's files are removed; only MANIFEST + handoff are re-written",
+      "expected": "removed = C-004 traces; changed = MANIFEST.md + handoffs",
+      "actual": "removed 6 file(s); changed ['H-001.md', 'MANIFEST.md']",
+      "status": "PASS"
+    },
+    {
+      "id": "s4.guard_default_store",
+      "desc": "erase refuses to run against the committed store/",
+      "expected": "non-zero exit, 'refusing to erase'",
+      "actual": "refused",
+      "status": "PASS"
+    }
+  ],
+  "logs": "lab-reports/LAB-20261121-211141ICT-s4-offline/logs",
+  "notes": [
+    "removed: curated/A-openai/C-004.md (was sha256:0c40aac0053b51fe...)",
+    "removed: curated/A-openai-gpt/C-004.md (was sha256:a109ea38d8a79da7...)",
+    "removed: curated/B-claude-sonnet/C-004.md (was sha256:d1f20a2234c00ff4...)",
+    "removed: curated/LABRUN/C-004.md (was sha256:848b21637e4e6fb4...)",
+    "removed: decisions/C-004.md (was sha256:565dc1530e0ffa4b...)",
+    "removed: raw/candidates/C-004.md (was sha256:7c2602c12c2d5550...)",
+    "re-written: MANIFEST.md sha256 cacbc5e8120f... -> b8a52fbe56b5...",
+    "re-written: handoffs/H-001.md sha256 7a5f9a2a2510... -> 9b087e7ee2ed...",
+    "HONEST LIMIT — Git history: this erasure cleans the working store, but the candidate's content still exists in Git history (commit 42ff14c). The data here is synthetic, so there is no harm. Production deletion of real PII would require: no Git as the system of record for PII; deletion across the store, search indexes, backups, logs and the model provider's retention; and a deletion RECORD that itself holds no PII.",
+    "Run on a lab store copy only; the committed store/ was never touched (guard enforced)."
+  ],
+  "counts": {
+    "PASS": 6,
+    "FAIL": 0,
+    "NOT RUN": 0
+  }
+}
