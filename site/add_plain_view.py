@@ -71,7 +71,7 @@ function tab(v, label){ return `<a href="${link({view:v})}">${label}</a>`; }
 
 const NOTES = {
   screen(app){
-    app.insertAdjacentElement("afterbegin", pin(`<b>CASE FILE · TALENT PRE-SCREEN</b>One job, nine synthetic candidates. The AI reads every CV and points to the lines that match the job. It does not score, rank or decide. A person does. Then see ${tab("swap","Model swap")} and ${tab("handoff","Handoff")}.`, "wide"));
+    app.insertAdjacentElement("afterbegin", pin(`<b>CASE FILE · TALENT PRE-SCREEN</b>One job, eight synthetic candidates on this page; the ninth joins in the ${tab("handoff","Handoff")} tab. The AI reads every CV and points to the lines that match the job. It does not score, rank or decide. A person does. Then see ${tab("swap","Model swap")}.`, "wide"));
     const q = app.querySelector(".grid > .card:last-child .ev blockquote");
     before(q && q.closest(".ev"), `Every line in grey is copied word for word from the CV. The ✓ means a machine checked it against the file. No ✓, no trust.`, "r");
     startHere(q);
