@@ -7,3 +7,4 @@ runs/*.tmp
 lab/work/
 .venv-demo/
 
+site/index.baseline.html
