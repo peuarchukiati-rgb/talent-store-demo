@@ -516,8 +516,6 @@ const NOTES = {
     startHere(q);
     const gate = app.querySelector(".gate");
     before(gate, `The AI stops here. A Nestlé person presses one of these buttons. Not the model.`);
-    const list = app.querySelector(".grid > .card:nth-child(2)");
-    inside(list, `Sorted by ID, not by merit. There is no score to sort by.`, "paper r");
     const runs = app.querySelector(".runs");
     before(runs, `Two models, two vendors. Switch between them: the files underneath stay the same.`, "paper");
   },
